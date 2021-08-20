@@ -12,6 +12,7 @@ export default function App() {
       <Starter/>
       <StatusBar style="auto" />
     </View>
+
   );
 }
 

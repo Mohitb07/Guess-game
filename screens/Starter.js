@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
-import { View,Text, StyleSheet, Button, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { 
+    View,Text, 
+    StyleSheet, 
+    Button, 
+    Keyboard, 
+    TouchableWithoutFeedback, 
+    Alert 
+} 
+from 'react-native';
 
 import Card from '../components/Card';
 import Colors from '../constants/color'
 import Input from '../components/Input';
+import NumberContainer from '../components/NumberContainer';
 
 const Starter = props => {
     const [inputValue, setInputValue] = useState('')
@@ -21,12 +30,30 @@ const Starter = props => {
 
     const confirmInputHandler = () => {
         const chosenNumber = parseInt(inputValue)
-        if(chosenNumber === NaN || chosenNumber <= 0 || chosenNumber > 99){
+        if(isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99){
+            Alert.alert('Invalid Number!', 'Number has to be a number between 1 and 99', [{
+                text: 'Okay',
+                style: 'destructive',
+                onPress: resetInputHandler
+            }])
             return;
         }
         setIsConfirmed(true)
         setInputValue('')
         setSelectedNumber(chosenNumber)
+        Keyboard.dismiss()
+    }
+
+    let confirmedOutput;
+
+    if(isConfirmed){
+        confirmedOutput = (
+            <Card style={styles.summaryContainer}>
+                <Text>You Selected</Text>
+                <NumberContainer>{selectedNumber}</NumberContainer>
+                <Button title="START GAME" onPress={() => props.onStartGame(selectedNumber)}/>
+            </Card>
+        )
     }
     
     return (
@@ -52,6 +79,7 @@ const Starter = props => {
                     <View style={styles.button}><Button title="Confirm" color={Colors.primary} onPress={confirmInputHandler} /></View>
                 </View>
             </Card>
+            {confirmedOutput}
         </View>
         </TouchableWithoutFeedback>
     )
@@ -61,7 +89,7 @@ const styles = StyleSheet.create({
     screen: {
         flex: 1,
         padding: 10,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     title: {
         fontSize: 20
@@ -70,6 +98,7 @@ const styles = StyleSheet.create({
         width:300,
         maxWidth: '80%',
         alignItems:'center',
+        marginTop:10
     },
     btnContainer: {
         flexDirection:'row',
@@ -83,7 +112,11 @@ const styles = StyleSheet.create({
     input: {
         width: 50,
         textAlign: "center"
-    }
+    },
+    summaryContainer: {
+        marginTop: 20,
+        alignItems: 'center'
+    },
 })
 
 export default Starter;
